@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Floating Note",
+  "description": "Clipboard izleyici ve not defteri",
+  "version": "1.0.0",
+  "permissions": ["storage", "clipboardRead"],
+  "action": {
+    "default_title": "Floating Note Aç/Kapat"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

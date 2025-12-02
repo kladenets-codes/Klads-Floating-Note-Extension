@@ -1,0 +1,209 @@
+#floating-note-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 400px;
+  height: 280px;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: none;
+}
+
+#floating-note-container.visible {
+  display: flex;
+  flex-direction: column;
+}
+
+#floating-note-container .fn-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(30, 30, 30, 0.92);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+#floating-note-container .fn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  cursor: move;
+  user-select: none;
+}
+
+#floating-note-container .fn-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 330px;
+  overflow-x: auto;
+}
+
+#floating-note-container .fn-tab {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+#floating-note-container .fn-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#floating-note-container .fn-tab.active {
+  background: rgba(100, 150, 255, 0.3);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+#floating-note-container .fn-add-tab {
+  background: rgba(100, 200, 100, 0.2);
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 10px;
+}
+
+#floating-note-container .fn-add-tab:hover {
+  background: rgba(100, 200, 100, 0.4);
+}
+
+#floating-note-container .fn-tab-name {
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+#floating-note-container .fn-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+#floating-note-container .fn-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#floating-note-container .fn-body {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#floating-note-container .fn-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#floating-note-container .fn-content.hidden {
+  display: none;
+}
+
+#floating-note-container .fn-clipboard-display {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #e0e0e0;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-family: 'Consolas', 'Monaco', monospace;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#floating-note-container textarea {
+  flex: 1;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #e0e0e0;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+#floating-note-container textarea:focus {
+  border-color: rgba(100, 150, 255, 0.5);
+}
+
+#floating-note-container textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+#floating-note-container .fn-footer {
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#floating-note-container .fn-char-count {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+
+#floating-note-container .fn-footer-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+#floating-note-container .fn-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+#floating-note-container .fn-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#floating-note-container .fn-btn.fn-copy {
+  background: rgba(100, 150, 255, 0.2);
+}
+
+#floating-note-container .fn-btn.fn-copy:hover {
+  background: rgba(100, 150, 255, 0.4);
+}
+
+#floating-note-container .fn-btn.fn-delete {
+  background: rgba(255, 100, 100, 0.2);
+}
+
+#floating-note-container .fn-btn.fn-delete:hover {
+  background: rgba(255, 100, 100, 0.4);
+}
+
+#floating-note-container .fn-btn.hidden {
+  display: none;
+}
