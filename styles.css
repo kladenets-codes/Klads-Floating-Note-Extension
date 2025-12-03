@@ -269,15 +269,23 @@
   line-height: 1.5;
   font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
   color: #e0e0e0;
-  white-space: pre-wrap;
   word-break: break-word;
-  max-height: 80px;
-  overflow-y: auto;
-  transition: max-height 0.3s ease;
 }
 
-#floating-note-container .fn-clipboard-slot.expanded .fn-slot-content {
-  max-height: 500px !important;
+#floating-note-container .fn-slot-content.hidden {
+  display: none;
+}
+
+#floating-note-container .fn-slot-preview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: none;
+}
+
+#floating-note-container .fn-slot-full {
+  white-space: pre-wrap;
+  max-height: 300px;
   overflow-y: auto;
 }
 

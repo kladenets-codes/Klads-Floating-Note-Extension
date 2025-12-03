@@ -98,7 +98,8 @@ function createFloatingNote() {
           <button class="fn-slot-copy" title="Copy">📋</button>
         </div>
       </div>
-      <pre class="fn-slot-content">(Empty)</pre>
+      <pre class="fn-slot-content fn-slot-preview">(Empty)</pre>
+      <pre class="fn-slot-content fn-slot-full hidden"></pre>
     `;
     slotsContainer.appendChild(slot);
     clipboardSlots.push({ id: slotId, content: '', locked: false, expanded: false });
@@ -109,8 +110,12 @@ function createFloatingNote() {
       const index = parseInt(slot.dataset.slot) - 1;
       clipboardSlots[index].expanded = !clipboardSlots[index].expanded;
       const btn = slot.querySelector('.fn-slot-expand');
+      const preview = slot.querySelector('.fn-slot-preview');
+      const full = slot.querySelector('.fn-slot-full');
       btn.textContent = clipboardSlots[index].expanded ? '▲' : '▼';
       slot.classList.toggle('expanded', clipboardSlots[index].expanded);
+      preview.classList.toggle('hidden', clipboardSlots[index].expanded);
+      full.classList.toggle('hidden', !clipboardSlots[index].expanded);
     });
 
     // Lock button
@@ -126,7 +131,8 @@ function createFloatingNote() {
     // Copy button for individual slot
     slot.querySelector('.fn-slot-copy').addEventListener('click', async (e) => {
       e.stopPropagation();
-      const content = slot.querySelector('.fn-slot-content').textContent;
+      const index = parseInt(slot.dataset.slot) - 1;
+      const content = clipboardSlots[index].content;
       if (content && content !== '(Empty)') {
         await navigator.clipboard.writeText(content);
         const btn = slot.querySelector('.fn-slot-copy');
@@ -374,8 +380,11 @@ function createFloatingNote() {
         const slots = slotsContainer.querySelectorAll('.fn-clipboard-slot');
         for (let i = 0; i < slots.length; i++) {
           if (!clipboardSlots[i]?.locked) {
-            const content = slots[i].querySelector('.fn-slot-content');
-            content.textContent = text;
+            const preview = slots[i].querySelector('.fn-slot-preview');
+            const full = slots[i].querySelector('.fn-slot-full');
+            const firstLine = text.split('\n')[0].trim() || text.substring(0, 100);
+            preview.textContent = firstLine;
+            full.textContent = text;
             clipboardSlots[i].content = text;
             break;
           }
@@ -383,9 +392,12 @@ function createFloatingNote() {
       }
 
     } catch (err) {
-      const firstSlot = slotsContainer.querySelector('.fn-slot-content');
+      const firstSlot = slotsContainer.querySelector('.fn-clipboard-slot');
       if (firstSlot && !clipboardSlots[0]?.locked) {
-        firstSlot.textContent = '(Click page to access clipboard)';
+        const preview = firstSlot.querySelector('.fn-slot-preview');
+        const full = firstSlot.querySelector('.fn-slot-full');
+        preview.textContent = '(Click page to access clipboard)';
+        full.textContent = '(Click page to access clipboard)';
       }
     }
   }
