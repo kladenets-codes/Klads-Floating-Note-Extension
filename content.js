@@ -395,6 +395,20 @@ function createFloatingNote() {
     }
   });
 
+  // Transform text: uppercase and Turkish chars to English
+  function transformText(text) {
+    if (!text) return text;
+    return text
+      .toUpperCase()
+      .replace(/İ/g, 'I')
+      .replace(/I/g, 'I')
+      .replace(/Ş/g, 'S')
+      .replace(/Ğ/g, 'G')
+      .replace(/Ü/g, 'U')
+      .replace(/Ö/g, 'O')
+      .replace(/Ç/g, 'C');
+  }
+
   // Clipboard watching
   let lastClipboard = '';
 
@@ -402,23 +416,32 @@ function createFloatingNote() {
     try {
       const text = await navigator.clipboard.readText();
 
-      // If clipboard changed, update first unlocked slot
-      if (text && text !== lastClipboard) {
-        lastClipboard = text;
+      if (text) {
+        const transformed = transformText(text);
 
-        // Find first unlocked slot and update it
+        // Update ALL unlocked slots with current clipboard
         const slots = slotsContainer.querySelectorAll('.fn-clipboard-slot');
+        let updated = false;
+
         for (let i = 0; i < slots.length; i++) {
           if (!clipboardSlots[i]?.locked) {
             const preview = slots[i].querySelector('.fn-slot-preview');
             const full = slots[i].querySelector('.fn-slot-full');
-            const firstLine = text.split('\n')[0].trim() || text.substring(0, 100);
-            preview.textContent = firstLine;
-            full.textContent = text;
-            clipboardSlots[i].content = text;
-            saveClipboardSlots();
-            break;
+            const firstLine = transformed.split('\n')[0].trim() || transformed.substring(0, 100);
+
+            // Always update unlocked slots
+            if (clipboardSlots[i].content !== transformed) {
+              preview.textContent = firstLine;
+              full.textContent = transformed;
+              clipboardSlots[i].content = transformed;
+              updated = true;
+            }
           }
+        }
+
+        if (updated || text !== lastClipboard) {
+          lastClipboard = text;
+          saveClipboardSlots();
         }
       }
 
@@ -427,8 +450,8 @@ function createFloatingNote() {
       if (firstSlot && !clipboardSlots[0]?.locked) {
         const preview = firstSlot.querySelector('.fn-slot-preview');
         const full = firstSlot.querySelector('.fn-slot-full');
-        preview.textContent = '(Click page to access clipboard)';
-        full.textContent = '(Click page to access clipboard)';
+        preview.textContent = '(CLICK PAGE TO ACCESS CLIPBOARD)';
+        full.textContent = '(CLICK PAGE TO ACCESS CLIPBOARD)';
       }
     }
   }
