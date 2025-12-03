@@ -2,8 +2,9 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  width: 400px;
-  height: 280px;
+  width: 420px;
+  min-height: 320px;
+  max-height: 80vh;
   z-index: 2147483647;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   display: none;
@@ -18,62 +19,69 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: rgba(30, 30, 30, 0.92);
-  border-radius: 10px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, rgba(35, 35, 45, 0.95), rgba(25, 25, 35, 0.98));
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
   overflow: hidden;
 }
 
+/* Header */
 #floating-note-container .fn-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   cursor: move;
   user-select: none;
 }
 
 #floating-note-container .fn-tabs {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
-  max-width: 330px;
-  overflow-x: auto;
+  max-width: 280px;
 }
 
 #floating-note-container .fn-tab {
-  background: rgba(255, 255, 255, 0.05);
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  padding: 6px 12px;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 14px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 12px;
-  transition: all 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 #floating-note-container .fn-tab:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 #floating-note-container .fn-tab.active {
-  background: rgba(100, 150, 255, 0.3);
-  color: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(99, 132, 255, 0.4), rgba(120, 100, 255, 0.3));
+  color: #fff;
+  border-color: rgba(99, 132, 255, 0.5);
+  box-shadow: 0 2px 8px rgba(99, 132, 255, 0.25);
 }
 
 #floating-note-container .fn-add-tab {
-  background: rgba(100, 200, 100, 0.2);
-  font-size: 14px;
+  background: rgba(100, 200, 130, 0.15);
+  border-color: rgba(100, 200, 130, 0.25);
+  color: rgba(100, 200, 130, 0.9);
+  font-size: 16px;
   font-weight: bold;
-  padding: 6px 10px;
+  padding: 4px 12px;
 }
 
 #floating-note-container .fn-add-tab:hover {
-  background: rgba(100, 200, 100, 0.4);
+  background: rgba(100, 200, 130, 0.25);
+  border-color: rgba(100, 200, 130, 0.4);
 }
 
 #floating-note-container .fn-tab-name {
@@ -84,23 +92,39 @@
   display: inline-block;
 }
 
-#floating-note-container .fn-close {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 18px;
-  cursor: pointer;
-  padding: 0 4px;
-  line-height: 1;
+/* Header Actions */
+#floating-note-container .fn-header-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
-#floating-note-container .fn-close:hover {
+#floating-note-container .fn-header-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+#floating-note-container .fn-header-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.9);
 }
 
+#floating-note-container .fn-close:hover {
+  background: rgba(255, 100, 100, 0.2);
+  border-color: rgba(255, 100, 100, 0.3);
+  color: #ff6b6b;
+}
+
+/* Body */
 #floating-note-container .fn-body {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -117,93 +141,319 @@
   display: none;
 }
 
-#floating-note-container .fn-clipboard-display {
-  flex: 1;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Clipboard Toolbar */
+#floating-note-container .fn-clipboard-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+#floating-note-container .fn-toolbar-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 5px 12px;
   border-radius: 6px;
-  color: #e0e0e0;
-  padding: 10px;
-  font-size: 13px;
-  line-height: 1.5;
-  font-family: 'Consolas', 'Monaco', monospace;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+#floating-note-container .fn-toolbar-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+#floating-note-container .fn-add-slot {
+  color: rgba(100, 200, 130, 0.9);
+  border-color: rgba(100, 200, 130, 0.3);
+}
+
+#floating-note-container .fn-add-slot:hover {
+  background: rgba(100, 200, 130, 0.2);
+}
+
+#floating-note-container .fn-remove-slot {
+  color: rgba(255, 130, 130, 0.9);
+  border-color: rgba(255, 130, 130, 0.3);
+}
+
+#floating-note-container .fn-remove-slot:hover {
+  background: rgba(255, 130, 130, 0.2);
+}
+
+/* Clipboard Slots */
+#floating-note-container .fn-clipboard-slots {
+  flex: 1;
   overflow-y: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-#floating-note-container textarea {
-  flex: 1;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: #e0e0e0;
-  padding: 10px;
-  font-size: 13px;
-  line-height: 1.5;
-  resize: none;
-  outline: none;
-  font-family: 'Consolas', 'Monaco', monospace;
+#floating-note-container .fn-clipboard-slot {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-#floating-note-container textarea:focus {
-  border-color: rgba(100, 150, 255, 0.5);
-}
-
-#floating-note-container textarea::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-#floating-note-container .fn-footer {
-  padding: 8px 10px;
+#floating-note-container .fn-slot-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#floating-note-container .fn-slot-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.5px;
+}
+
+#floating-note-container .fn-slot-copy {
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+#floating-note-container .fn-slot-copy:hover,
+#floating-note-container .fn-slot-lock:hover,
+#floating-note-container .fn-slot-expand:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#floating-note-container .fn-slot-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+#floating-note-container .fn-slot-lock,
+#floating-note-container .fn-slot-expand {
+  background: none;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+#floating-note-container .fn-slot-expand {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#floating-note-container .fn-clipboard-slot.locked {
+  border-color: rgba(255, 180, 100, 0.4);
+  background: rgba(255, 180, 100, 0.08);
+}
+
+#floating-note-container .fn-clipboard-slot.locked .fn-slot-header {
+  background: rgba(255, 180, 100, 0.1);
+}
+
+#floating-note-container .fn-slot-content {
+  padding: 10px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+  color: #e0e0e0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 80px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease;
+}
+
+#floating-note-container .fn-clipboard-slot.expanded .fn-slot-content {
+  max-height: 500px !important;
+  overflow-y: auto;
+}
+
+/* Textarea */
+#floating-note-container textarea {
+  flex: 1;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e0e0e0;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  font-family: 'Consolas', 'Monaco', 'Fira Code', monospace;
+  transition: border-color 0.2s;
+}
+
+#floating-note-container textarea:focus {
+  border-color: rgba(99, 132, 255, 0.5);
+}
+
+#floating-note-container textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Footer */
+#floating-note-container .fn-footer {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 #floating-note-container .fn-char-count {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   font-size: 11px;
+  font-weight: 500;
 }
 
 #floating-note-container .fn-footer-buttons {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 #floating-note-container .fn-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: rgba(255, 255, 255, 0.6);
-  padding: 4px 10px;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 6px 14px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 #floating-note-container .fn-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 #floating-note-container .fn-btn.fn-copy {
-  background: rgba(100, 150, 255, 0.2);
+  background: rgba(99, 132, 255, 0.2);
+  border-color: rgba(99, 132, 255, 0.3);
+  color: rgba(140, 170, 255, 0.95);
 }
 
 #floating-note-container .fn-btn.fn-copy:hover {
-  background: rgba(100, 150, 255, 0.4);
+  background: rgba(99, 132, 255, 0.3);
 }
 
 #floating-note-container .fn-btn.fn-delete {
-  background: rgba(255, 100, 100, 0.2);
+  background: rgba(255, 100, 100, 0.15);
+  border-color: rgba(255, 100, 100, 0.25);
+  color: rgba(255, 130, 130, 0.95);
 }
 
 #floating-note-container .fn-btn.fn-delete:hover {
-  background: rgba(255, 100, 100, 0.4);
+  background: rgba(255, 100, 100, 0.25);
 }
 
 #floating-note-container .fn-btn.hidden {
   display: none;
+}
+
+/* Settings Panel */
+#floating-note-container .fn-settings-panel {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  width: 220px;
+  background: linear-gradient(145deg, rgba(45, 45, 55, 0.98), rgba(35, 35, 45, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  overflow: hidden;
+}
+
+#floating-note-container .fn-settings-panel.hidden {
+  display: none;
+}
+
+#floating-note-container .fn-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#floating-note-container .fn-settings-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+#floating-note-container .fn-settings-close:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#floating-note-container .fn-settings-body {
+  padding: 12px;
+}
+
+#floating-note-container .fn-setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#floating-note-container .fn-setting-input {
+  width: 70px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 4px 8px;
+  font-size: 11px;
+  outline: none;
+}
+
+#floating-note-container .fn-setting-input:focus {
+  border-color: rgba(99, 132, 255, 0.5);
+}
+
+/* Scrollbar */
+#floating-note-container ::-webkit-scrollbar {
+  width: 6px;
+}
+
+#floating-note-container ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+#floating-note-container ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+#floating-note-container ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }

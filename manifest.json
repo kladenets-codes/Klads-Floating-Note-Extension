@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Floating Note",
-  "description": "Clipboard izleyici ve not defteri",
+  "description": "Clipboard monitor and notepad",
   "version": "1.0.0",
   "permissions": ["storage", "clipboardRead"],
   "action": {
-    "default_title": "Floating Note Aç/Kapat"
+    "default_title": "Toggle Floating Note"
   },
   "background": {
     "service_worker": "background.js"
