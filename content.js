@@ -84,25 +84,35 @@ function createFloatingNote() {
     }
   }
 
-  function addSlot() {
+  function addSlot(savedData = null) {
     const slotId = clipboardSlots.length + 1;
     const slot = document.createElement('div');
     slot.className = 'fn-clipboard-slot';
     slot.dataset.slot = slotId;
+
+    const content = savedData?.content || '';
+    const locked = savedData?.locked || false;
+    const expanded = savedData?.expanded || false;
+    const preview = content ? (content.split('\n')[0].trim() || content.substring(0, 100)) : '(Empty)';
+
     slot.innerHTML = `
       <div class="fn-slot-header">
         <span class="fn-slot-label">SLOT ${slotId}</span>
         <div class="fn-slot-actions">
-          <button class="fn-slot-expand" title="Expand/Collapse">▼</button>
-          <button class="fn-slot-lock" title="Lock/Unlock">🔓</button>
+          <button class="fn-slot-expand" title="Expand/Collapse">${expanded ? '▲' : '▼'}</button>
+          <button class="fn-slot-lock" title="Lock/Unlock">${locked ? '🔒' : '🔓'}</button>
           <button class="fn-slot-copy" title="Copy">📋</button>
         </div>
       </div>
-      <pre class="fn-slot-content fn-slot-preview">(Empty)</pre>
-      <pre class="fn-slot-content fn-slot-full hidden"></pre>
+      <pre class="fn-slot-content fn-slot-preview${expanded ? ' hidden' : ''}">${preview}</pre>
+      <pre class="fn-slot-content fn-slot-full${expanded ? '' : ' hidden'}">${content || '(Empty)'}</pre>
     `;
     slotsContainer.appendChild(slot);
-    clipboardSlots.push({ id: slotId, content: '', locked: false, expanded: false });
+
+    if (locked) slot.classList.add('locked');
+    if (expanded) slot.classList.add('expanded');
+
+    clipboardSlots.push({ id: slotId, content: content, locked: locked, expanded: expanded });
 
     // Expand button for individual slot
     slot.querySelector('.fn-slot-expand').addEventListener('click', (e) => {
@@ -116,6 +126,7 @@ function createFloatingNote() {
       slot.classList.toggle('expanded', clipboardSlots[index].expanded);
       preview.classList.toggle('hidden', clipboardSlots[index].expanded);
       full.classList.toggle('hidden', !clipboardSlots[index].expanded);
+      saveClipboardSlots();
     });
 
     // Lock button
@@ -126,6 +137,7 @@ function createFloatingNote() {
       const btn = slot.querySelector('.fn-slot-lock');
       btn.textContent = clipboardSlots[index].locked ? '🔒' : '🔓';
       slot.classList.toggle('locked', clipboardSlots[index].locked);
+      saveClipboardSlots();
     });
 
     // Copy button for individual slot
@@ -146,17 +158,36 @@ function createFloatingNote() {
     if (clipboardSlots.length > 1) {
       clipboardSlots.pop();
       slotsContainer.lastElementChild?.remove();
+      saveClipboardSlots();
     }
   }
 
+  function saveClipboardSlots() {
+    chrome.storage.local.set({
+      floatingNoteSlots: clipboardSlots.length,
+      clipboardSlotsData: clipboardSlots
+    });
+  }
+
   // Load saved data
-  chrome.storage.local.get(['floatingNotes', 'floatingNotePos', 'floatingNoteSlots'], (data) => {
+  chrome.storage.local.get(['floatingNotes', 'floatingNotePos', 'clipboardSlotsData'], (data) => {
     if (data.floatingNotePos) {
       container.style.top = data.floatingNotePos.top;
       container.style.right = 'auto';
       container.style.left = data.floatingNotePos.left;
     }
-    initSlots(data.floatingNoteSlots || 1);
+
+    // Load clipboard slots with saved data
+    if (data.clipboardSlotsData && data.clipboardSlotsData.length > 0) {
+      slotsContainer.innerHTML = '';
+      clipboardSlots = [];
+      data.clipboardSlotsData.forEach(slotData => {
+        addSlot(slotData);
+      });
+    } else {
+      initSlots(1);
+    }
+
     if (data.floatingNotes && data.floatingNotes.length > 0) {
       data.floatingNotes.forEach(note => {
         createNoteTab(note.id, note.name, note.content);
@@ -168,12 +199,11 @@ function createFloatingNote() {
   // Add/Remove slot buttons
   addSlotBtn.addEventListener('click', () => {
     addSlot();
-    chrome.storage.local.set({ floatingNoteSlots: clipboardSlots.length });
+    saveClipboardSlots();
   });
 
   removeSlotBtn.addEventListener('click', () => {
     removeSlot();
-    chrome.storage.local.set({ floatingNoteSlots: clipboardSlots.length });
   });
 
   // Settings
@@ -386,6 +416,7 @@ function createFloatingNote() {
             preview.textContent = firstLine;
             full.textContent = text;
             clipboardSlots[i].content = text;
+            saveClipboardSlots();
             break;
           }
         }
@@ -415,6 +446,74 @@ function createFloatingNote() {
   }
 
   startClipboardWatch();
+
+  // Listen for storage changes to sync across tabs
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local') return;
+
+    // Sync clipboard slots across tabs
+    if (changes.clipboardSlotsData) {
+      const newData = changes.clipboardSlotsData.newValue;
+      if (newData && Array.isArray(newData)) {
+        // Update slots UI without rebuilding everything
+        const slots = slotsContainer.querySelectorAll('.fn-clipboard-slot');
+
+        // If slot count changed, rebuild
+        if (newData.length !== clipboardSlots.length) {
+          slotsContainer.innerHTML = '';
+          clipboardSlots = [];
+          newData.forEach(slotData => {
+            addSlot(slotData);
+          });
+        } else {
+          // Just update content and state
+          newData.forEach((slotData, i) => {
+            if (slots[i] && clipboardSlots[i]) {
+              const preview = slots[i].querySelector('.fn-slot-preview');
+              const full = slots[i].querySelector('.fn-slot-full');
+              const lockBtn = slots[i].querySelector('.fn-slot-lock');
+              const expandBtn = slots[i].querySelector('.fn-slot-expand');
+
+              // Update content
+              const previewText = slotData.content ? (slotData.content.split('\n')[0].trim() || slotData.content.substring(0, 100)) : '(Empty)';
+              preview.textContent = previewText;
+              full.textContent = slotData.content || '(Empty)';
+              clipboardSlots[i].content = slotData.content;
+
+              // Update lock state
+              clipboardSlots[i].locked = slotData.locked;
+              lockBtn.textContent = slotData.locked ? '🔒' : '🔓';
+              slots[i].classList.toggle('locked', slotData.locked);
+
+              // Update expand state
+              clipboardSlots[i].expanded = slotData.expanded;
+              expandBtn.textContent = slotData.expanded ? '▲' : '▼';
+              slots[i].classList.toggle('expanded', slotData.expanded);
+              preview.classList.toggle('hidden', slotData.expanded);
+              full.classList.toggle('hidden', !slotData.expanded);
+            }
+          });
+        }
+      }
+    }
+
+    // Sync notes across tabs
+    if (changes.floatingNotes) {
+      const newNotes = changes.floatingNotes.newValue;
+      if (newNotes && Array.isArray(newNotes)) {
+        // Update existing notes content
+        newNotes.forEach(noteData => {
+          const content_div = body.querySelector(`[data-content="note-${noteData.id}"]`);
+          if (content_div) {
+            const textarea = content_div.querySelector('textarea');
+            if (textarea && textarea.value !== noteData.content) {
+              textarea.value = noteData.content;
+            }
+          }
+        });
+      }
+    }
+  });
 
   return container;
 }
